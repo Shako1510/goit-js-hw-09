@@ -9,64 +9,118 @@ const minutesValue = document.querySelector('[data-minutes]');
 const secondsValue = document.querySelector('[data-seconds]');
 
 
-const timer = {
-    start() {
-        timerID = null;
-        const startTime = Date.now();
-        const date = new Date(inputEll.value).getTime();
-        if (date <= startTime) {
-            window.alert('sdsd')
 
-            return;
-        }
-        startBtn.setAttribute('disabled', true);
-        this.timerID = setInterval(() => {
-            const startTime = Date.now();
+let startTime = Date.now();
+let intervalID = null;
+let sameData;
 
-            const date = new Date(inputEll.value).getTime();
-            const carrentTime = date - startTime;
-            // console.log(carrentTime);
+startBtn.addEventListener('click', startTimer);
+startBtn.setAttribute('disabled', true);
 
-            // startBtn.removeAttribute('disabled')
-
-            const timeComponents = convertMs(carrentTime);
-            console.log(timeComponents);
-
-            daysValue.textContent = addLeadingZero(convertMs(carrentTime).days);
-            hoursValue.textContent = addLeadingZero(convertMs(carrentTime).hours);
-            minutesValue.textContent = addLeadingZero(convertMs(carrentTime).minutes);
-            secondsValue.textContent = addLeadingZero(convertMs(carrentTime).seconds);
-
-        }, 2000);
-    },
-    stop() {
-        clearInterval(this.timerId);
-    }
-}
-
-function addLeadingZero(value) {
-    return String(value).padStart(2, '0');
-}
-
-startBtn.addEventListener('click', () => {
-    timer.start();
-    timer.stop();
-
-})
 
 const options = {
     enableTime: true,
     time_24hr: true,
-    defaultDate: new Date(),
+    defaultDate: startTime,
     minuteIncrement: 1,
     onClose(selectedDates) {
-        console.log(selectedDates[0])
+        if (selectedDates[0].getTime() <= startTime) {
 
+            window.alert("Please choose a date in the future");
+            startBtn.setAttribute('disabled', false);
+        }
+        else {
+            startBtn.removeAttribute('disabled', false);
+        }
+        // console.log(startTime);
+        // console.log(selectedDates[0]);
+        return sameData = selectedDates[0].getTime()
+
+    },
+};
+
+flatpickr(inputEll, options);
+
+function startTimer() {
+    // startBtn.disabled = true;
+
+    intervalID = setInterval(() => {
+        const time = Date.now();
+        const currentTime = sameData - time;
+        if (currentTime <= 0) {
+            return
+        }
+        const timeComponents = convertMs(currentTime);
+        console.log(timeComponents);
+
+        daysValue.textContent = addLeadingZero(convertMs(currentTime).days);
+        hoursValue.textContent = addLeadingZero(convertMs(currentTime).hours);
+        minutesValue.textContent = addLeadingZero(convertMs(currentTime).minutes);
+        secondsValue.textContent = addLeadingZero(convertMs(currentTime).seconds);
+
+    }, 1000);
+    stopTimer();
+}
+
+function stopTimer() {
+    if (Date.parse(inputEll.value) <= 0) {
+        clearInterval(timerId);
+        // startBtn.disabled = false;
     }
 };
 
+function addLeadingZero(value) {
+    return String(value).padStart(2, '0');
+}
+// const timer = {
+//     start() {
+//         timerID = null;
+//         const startTime = Date.now();
+//         const date = new Date(inputEll.value).getTime();
+//         if (date <= startTime) {
+//             window.alert('sdsd')
 
-flatpickr(inputEll, { options });
+//             return;
+//         }
+//         startBtn.setAttribute('disabled', true);
+//         this.timerID = setInterval(() => {
+//             const startTime = Date.now();
+
+//             const date = new Date(inputEll.value).getTime();
+//             const carrentTime = date - startTime;
+//             // console.log(carrentTime);
+
+//             // startBtn.removeAttribute('disabled')
+
+//             const timeComponents = convertMs(carrentTime);
+//             console.log(timeComponents);
+
+//             daysValue.textContent = addLeadingZero(convertMs(carrentTime).days);
+//             hoursValue.textContent = addLeadingZero(convertMs(carrentTime).hours);
+//             minutesValue.textContent = addLeadingZero(convertMs(carrentTime).minutes);
+//             secondsValue.textContent = addLeadingZero(convertMs(carrentTime).seconds);
+
+//         }, 2000);
+//     },
+//     stop() {
+//         clearInterval(this.timerId);
+//     }
+// }
+
+// function addLeadingZero(value) {
+//     return String(value).padStart(2, '0');
+// }
+
+// startBtn.addEventListener('click', () => {
+//     timer.start();
+//     timer.stop();
+
+// })
+
+
+
+
+
 
 function convertMs(ms) {
     // Number of milliseconds per unit of time
